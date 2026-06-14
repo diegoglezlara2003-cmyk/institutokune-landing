@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Garabato by Kune — GovTech que transforma política pública en tareas ágiles</title>
+  <meta name="description" content="Garabato convierte el diseño de políticas públicas en tareas ágiles, ejecutables en campo y 100% auditables. Del MIR al Kanban, de la calle a la bitácora." />
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;500;600&family=Gochi+Hand&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper:   '#F1F1ED',
+            ink:     '#17181C',
+            kune:    '#2B3FD6',
+            crayon: {
+              red:    '#E63B2E',
+              orange: '#F58220',
+              yellow: '#FFD21F',
+              lime:   '#7FD14C',
+              emerald:'#1FA86B',
+              cyan:   '#29C5D6',
+              sky:    '#5FA9F5',
+              blue:   '#2B3FD6',
+              navy:   '#1E2A78',
+              purple: '#6A3FD4',
+              pink:   '#F977B6',
+              beige:  '#D8B98F',
+            },
+          },
+          fontFamily: {
+            mono: ['"IBM Plex Mono"', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            hand: ['"Gochi Hand"', 'cursive'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background-color: #F1F1ED; color: #17181C; }
+
+    h1, h2, h3, h4 { font-family: 'IBM Plex Mono', monospace; text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    /* Lienzos de fondo */
+    #scene-3d, #crayon-trail {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    #scene-3d   { z-index: -2; }
+    #crayon-trail { z-index: -1; }
+
+    /* Fotografías estrictamente en blanco y negro */
+    .foto-bn { filter: grayscale(100%) contrast(1.05); }
+
+    /* Tarjeta de cristal */
+    .glass {
+      background: rgba(241, 241, 237, 0.88);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* Marco de tinta: lenguaje "impreso" compartido por todas las tarjetas */
+    .ink-frame, .hard-card {
+      border: 2px solid #17181C;
+      box-shadow: 5px 5px 0 0 #17181C;
+    }
+    .hard-card { background: #FBFBF9; }
+
+    /* Subrayado de crayón bajo los eyebrows */
+    .crayon-underline { position: relative; display: inline-block; }
+    .crayon-underline svg {
+      position: absolute;
+      left: -4%;
+      bottom: -0.55em;
+      width: 108%;
+      height: 0.6em;
+    }
+
+    /* Resaltado de crayón detrás de una palabra */
+    .crayon-highlight { position: relative; white-space: nowrap; }
+    .crayon-highlight > span { position: relative; z-index: 1; }
+    .crayon-highlight::before {
+      content: '';
+      position: absolute;
+      inset: 0.08em -0.15em -0.02em -0.15em;
+      background: #FFD21F;
+      transform: rotate(-1.2deg) skewX(-6deg);
+      border-radius: 3px 8px 4px 9px;
+      z-index: 0;
+    }
+
+    /* Etiqueta de papel "by KUNE" */
+    .paper-tag {
+      background: #E9DCC0;
+      border: 1.5px solid rgba(23, 24, 28, 0.25);
+      box-shadow: 2px 3px 0 rgba(23, 24, 28, 0.18);
+      transform: rotate(-3.5deg);
+    }
+
+    /* Accesibilidad: foco visible */
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid #2B3FD6;
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    /* Campos de formulario: mismo lenguaje impreso que las tarjetas */
+    .campo {
+      width: 100%;
+      background: #FFFFFF;
+      border: 2px solid #17181C;
+      border-radius: 0;
+      padding: 0.75rem 0.875rem;
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 1rem;
+      color: #17181C;
+      overflow-wrap: break-word;
+    }
+    .campo::placeholder { color: rgba(23, 24, 28, 0.55); }
+    .campo:focus-visible {
+      outline: 3px solid #2B3FD6;
+      outline-offset: 2px;
+    }
+    .campo[aria-invalid="true"] { border-color: #E63B2E; }
+    .campo-error {
+      display: none;
+      margin-top: 0.375rem;
+      font-size: 0.8125rem;
+      color: #B3271C; /* rojo crayón oscurecido: cumple 4.5:1 sobre papel */
+    }
+    .campo[aria-invalid="true"] ~ .campo-error { display: block; }
+
+    /* Animaciones reveladas por GSAP: estados iniciales se asignan por JS
+       para que el contenido sea visible sin JavaScript. */
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      #crayon-trail { display: none; }
+    }
+  </style>
+</head>
+
+<body class="font-sans antialiased overflow-x-hidden">
+
+  <!-- Filtro SVG global: convierte trazos limpios en trazos de crayón -->
+  <svg width="0" height="0" class="absolute" aria-hidden="true">
+    <defs>
+      <filter id="crayon-rough" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="7" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Lienzos de fondo -->
+  <canvas id="scene-3d" aria-hidden="true"></canvas>
+  <canvas id="crayon-trail" aria-hidden="true"></canvas>
+
+  <!-- ===================== NAVEGACIÓN ===================== -->
+  <header class="fixed top-0 inset-x-0 z-50">
+    <nav class="glass border-b border-ink/10" aria-label="Principal">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+        <a href="#inicio" class="flex items-baseline gap-2 group">
+          <span class="font-mono font-bold text-lg tracking-tight">GARABATO<span class="text-kune">_</span></span>
+          <span class="font-hand text-kune text-lg -rotate-3 hidden sm:inline">by kune</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-widest">
+          <a href="#problema" class="hover:text-kune transition-colors">El problema</a>
+          <a href="#solucion" class="hover:text-kune transition-colors">La solución</a>
+          <a href="#plataforma" class="hover:text-kune transition-colors">Plataforma</a>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <a href="https://app.institutokune.org" target="_blank" rel="noopener" class="font-mono text-xs sm:text-sm font-medium border-2 border-kune text-kune px-3 sm:px-4 py-2 hover:bg-kune hover:text-white active:translate-y-px transition-all">
+            Probar Demo
+          </a>
+          <a href="#contacto" class="font-mono text-xs sm:text-sm font-medium bg-kune text-white px-4 py-2.5 hover:bg-crayon-navy active:translate-y-px transition-all">
+            Solicitar Piloto
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ===================== SECCIÓN 1: HERO ===================== -->
+    <section id="inicio" class="relative min-h-screen flex flex-col justify-center pt-24 pb-16">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8 w-full">
+
+        <p data-reveal class="font-mono text-xs sm:text-sm uppercase tracking-[0.25em] text-ink/70 mb-6">
+          Plataforma GovTech · SaaS
+        </p>
+
+        <div data-reveal class="relative">
+          <h1 class="font-mono font-bold leading-[0.95] tracking-tight text-[clamp(3.2rem,12vw,9.5rem)]">
+            GARABATO
+          </h1>
+          <span class="paper-tag inline-block font-hand text-kune text-2xl sm:text-4xl px-4 py-1 mt-3 sm:mt-0 sm:absolute sm:right-[4%] sm:-bottom-5 lg:right-[16%]">
+            by KUNE
+          </span>
+        </div>
+
+        <p data-reveal class="mt-10 sm:mt-14 max-w-2xl text-lg sm:text-xl text-ink/80 leading-relaxed">
+          La plataforma GovTech que transforma el diseño de políticas públicas en
+          tareas ágiles, ejecutables en campo y 100% auditables.
+        </p>
+
+        <div data-reveal class="mt-10 flex flex-wrap items-center gap-4">
+          <a href="https://app.institutokune.org" target="_blank" rel="noopener" class="font-mono font-medium border-2 border-kune text-kune px-7 py-[14px] text-sm sm:text-base hover:bg-kune hover:text-white active:translate-y-px transition-all">
+            Probar Demo
+          </a>
+          <a href="#contacto" class="font-mono font-medium bg-kune text-white px-7 py-4 text-sm sm:text-base hover:bg-crayon-navy active:translate-y-px transition-all">
+            Solicitar Piloto
+          </a>
+          <a href="#solucion" class="font-mono font-medium border-2 border-ink px-7 py-[14px] text-sm sm:text-base hover:bg-ink hover:text-paper active:translate-y-px transition-all">
+            Ver cómo funciona
+          </a>
+        </div>
+
+        <p data-reveal class="mt-8 font-mono text-xs text-ink/70 tracking-wide">
+          MIR&nbsp;→&nbsp;Kanban&nbsp;→&nbsp;Campo&nbsp;→&nbsp;Bitácora
+        </p>
+      </div>
+
+      <!-- Pista de scroll -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" aria-hidden="true">
+        <span class="font-mono text-[11px] uppercase tracking-[0.3em] text-ink/60">( scroll para desenredar )</span>
+        <svg width="18" height="34" viewBox="0 0 18 34" fill="none" style="filter:url(#crayon-rough)">
+          <path d="M9 2 C 7 9, 11 13, 9 20 L 9 30 M 3 24 L 9 31 L 15 24" stroke="#2B3FD6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ===================== SECCIÓN 2: EL PROBLEMA ===================== -->
+    <section id="problema" class="relative py-24 sm:py-32">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+        <p data-reveal class="font-mono text-xs sm:text-sm uppercase tracking-[0.25em] mb-8">
+          <span class="crayon-underline">El problema
+            <svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true" style="filter:url(#crayon-rough)">
+              <path d="M3 7 C 40 3, 80 10, 120 6 S 180 5, 197 7" stroke="#E63B2E" stroke-width="5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </p>
+
+        <h2 data-reveal class="font-mono font-bold text-3xl sm:text-5xl leading-tight max-w-3xl">
+          El papeleo se come a la política pública.
+        </h2>
+        <p data-reveal class="mt-6 max-w-2xl text-base sm:text-lg text-ink/75 leading-relaxed">
+          Entre el documento que diseña un programa y la persona que lo ejecuta en
+          la calle hay capturas duplicadas, PDFs olvidados y evidencia que se pierde.
+          Así se ve hoy:
+        </p>
+
+        <div class="mt-14 grid gap-6 md:grid-cols-3">
+
+          <!-- Tarjeta 1: Doble Captura — marco naranja -->
+          <article data-card class="ink-frame relative overflow-hidden min-h-[420px] flex flex-col justify-end">
+            <img class="foto-bn absolute inset-0 w-full h-full object-cover" loading="lazy"
+                 src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=900&q=60"
+                 alt="Escritorio cubierto de formatos fiscales, calculadora y teléfono" />
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 300 420" fill="none" preserveAspectRatio="none" aria-hidden="true" style="filter:url(#crayon-rough)">
+              <rect x="18" y="18" width="264" height="384" stroke="#F58220" stroke-width="7" stroke-linecap="round"/>
+              <path d="M40 80 C 90 60, 140 95, 195 70" stroke="#F58220" stroke-width="6" stroke-linecap="round"/>
+              <path d="M195 70 l -16 -7 M195 70 l -5 16" stroke="#F58220" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+            <div class="glass relative m-3 p-5 border border-ink/15">
+              <h3 class="font-mono font-bold text-lg">Doble captura</h3>
+              <p class="mt-2 text-sm text-ink/85 leading-relaxed">Capturar en campo sin señal y repetir en Excel.</p>
+            </div>
+          </article>
+
+          <!-- Tarjeta 2: Desconexión — flechas verdes que no conectan -->
+          <article data-card class="ink-frame relative overflow-hidden min-h-[420px] flex flex-col justify-end">
+            <img class="foto-bn absolute inset-0 w-full h-full object-cover" loading="lazy"
+                 src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=900&q=60"
+                 alt="Funcionario firmando documentos sobre un escritorio" />
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 300 420" fill="none" preserveAspectRatio="none" aria-hidden="true" style="filter:url(#crayon-rough)">
+              <path d="M45 120 C 95 90, 130 150, 175 115" stroke="#1FA86B" stroke-width="7" stroke-linecap="round"/>
+              <path d="M175 115 l -18 -4 M175 115 l -8 16" stroke="#1FA86B" stroke-width="7" stroke-linecap="round"/>
+              <path d="M230 190 C 200 230, 250 260, 215 300" stroke="#1FA86B" stroke-width="7" stroke-linecap="round"/>
+              <path d="M215 300 l 2 -19 M215 300 l 17 -7" stroke="#1FA86B" stroke-width="7" stroke-linecap="round"/>
+              <path d="M70 250 l 50 50 M120 250 l -50 50" stroke="#E63B2E" stroke-width="7" stroke-linecap="round"/>
+            </svg>
+            <div class="glass relative m-3 p-5 border border-ink/15">
+              <h3 class="font-mono font-bold text-lg">Desconexión</h3>
+              <p class="mt-2 text-sm text-ink/85 leading-relaxed">La Teoría de Cambio olvidada en un PDF.</p>
+            </div>
+          </article>
+
+          <!-- Tarjeta 3: Opacidad — bote de basura cyan -->
+          <article data-card class="ink-frame relative overflow-hidden min-h-[420px] flex flex-col justify-end">
+            <img class="foto-bn absolute inset-0 w-full h-full object-cover" loading="lazy"
+                 src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=900&q=60"
+                 alt="Estantes de archivo repletos de expedientes y documentos" />
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 300 420" fill="none" preserveAspectRatio="none" aria-hidden="true" style="filter:url(#crayon-rough)">
+              <path d="M105 95 L 195 95 M 120 95 L 127 200 L 173 200 L 180 95" stroke="#29C5D6" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M138 95 L 138 80 L 162 80 L 162 95" stroke="#29C5D6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M138 115 L 141 180 M 162 115 L 159 180" stroke="#29C5D6" stroke-width="5" stroke-linecap="round"/>
+              <path d="M210 140 C 235 150, 230 175, 208 180" stroke="#E63B2E" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+            <div class="glass relative m-3 p-5 border border-ink/15">
+              <h3 class="font-mono font-bold text-lg">Opacidad</h3>
+              <p class="mt-2 text-sm text-ink/85 leading-relaxed">Auditorías complejas y pérdida de evidencia física.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECCIÓN 3: LA SOLUCIÓN ===================== -->
+    <section id="solucion" class="relative py-24 sm:py-32">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+        <p data-reveal class="font-mono text-xs sm:text-sm uppercase tracking-[0.25em] mb-8">
+          <span class="crayon-underline">La solución
+            <svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true" style="filter:url(#crayon-rough)">
+              <path d="M3 7 C 40 3, 80 10, 120 6 S 180 5, 197 7" stroke="#1FA86B" stroke-width="5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </p>
+
+        <h2 data-reveal class="font-mono font-bold text-3xl sm:text-5xl leading-tight max-w-3xl">
+          Del garabato al circuito.
+        </h2>
+        <p data-reveal class="mt-6 max-w-2xl text-base sm:text-lg text-ink/75 leading-relaxed">
+          Garabato toma el diseño de tu política y lo desenreda en cuatro pasos:
+          cada uno deja un rastro verificable que conecta con el siguiente.
+        </p>
+
+        <!-- Flujo vertical -->
+        <div class="relative mt-16 max-w-4xl mx-auto">
+
+          <!-- Conector dibujado (se traza con el scroll) -->
+          <svg class="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-0 h-full w-4" viewBox="0 0 16 1000" preserveAspectRatio="none" fill="none" aria-hidden="true" style="filter:url(#crayon-rough)">
+            <path id="conector" d="M8 0 C 4 120, 12 240, 8 360 C 5 480, 11 600, 8 720 C 6 840, 10 930, 8 1000"
+                  stroke="#2B3FD6" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+
+          <ol class="space-y-12 md:space-y-20">
+            <!-- Paso 1 -->
+            <li data-step class="relative pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-16">
+              <div class="md:text-right md:pr-12">
+                <span class="font-mono text-xs font-medium tracking-[0.25em] text-kune">PASO 01 / DISEÑA</span>
+                <h3 class="font-mono font-bold text-xl sm:text-2xl mt-2">Copiloto IA valida la MIR</h3>
+                <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
+                  Cargas tu Matriz de Indicadores para Resultados y el copiloto
+                  detecta huecos lógicos antes de que lleguen a la calle.
+                </p>
+              </div>
+              <span class="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-kune border-2 border-ink" aria-hidden="true"></span>
+            </li>
+
+            <!-- Paso 2 -->
+            <li data-step class="relative pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-16">
+              <div class="md:col-start-2 md:pl-12">
+                <span class="font-mono text-xs font-medium tracking-[0.25em] text-crayon-orange">PASO 02 / AGILIZA</span>
+                <h3 class="font-mono font-bold text-xl sm:text-2xl mt-2">Conversión a Kanban</h3>
+                <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
+                  Cada objetivo se vuelve una tarjeta con responsable, plazo y
+                  evidencia requerida. La estrategia ahora es un tablero operativo.
+                </p>
+              </div>
+              <span class="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-crayon-orange border-2 border-ink" aria-hidden="true"></span>
+            </li>
+
+            <!-- Paso 3 -->
+            <li data-step class="relative pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-16">
+              <div class="md:text-right md:pr-12">
+                <span class="font-mono text-xs font-medium tracking-[0.25em] text-crayon-emerald">PASO 03 / EJECUTA</span>
+                <h3 class="font-mono font-bold text-xl sm:text-2xl mt-2">App offline-first</h3>
+                <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
+                  El equipo de campo captura una sola vez, sin señal. La evidencia
+                  se georreferencia y sincroniza cuando vuelve la conexión.
+                </p>
+              </div>
+              <span class="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-crayon-emerald border-2 border-ink" aria-hidden="true"></span>
+            </li>
+
+            <!-- Paso 4 -->
+            <li data-step class="relative pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-16">
+              <div class="md:col-start-2 md:pl-12">
+                <span class="font-mono text-xs font-medium tracking-[0.25em] text-crayon-purple">PASO 04 / AUDITA</span>
+                <h3 class="font-mono font-bold text-xl sm:text-2xl mt-2">Bitácora inmutable</h3>
+                <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
+                  Cada acción queda firmada y fechada. El órgano fiscalizador
+                  consulta la cadena completa sin pedir un solo oficio.
+                </p>
+              </div>
+              <span class="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-crayon-purple border-2 border-ink" aria-hidden="true"></span>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECCIÓN 4: LA PLATAFORMA (BENTO) ===================== -->
+    <section id="plataforma" class="relative py-24 sm:py-32">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+        <p data-reveal class="font-mono text-xs sm:text-sm uppercase tracking-[0.25em] mb-8">
+          <span class="crayon-underline">La plataforma
+            <svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true" style="filter:url(#crayon-rough)">
+              <path d="M3 7 C 40 3, 80 10, 120 6 S 180 5, 197 7" stroke="#6A3FD4" stroke-width="5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </p>
+
+        <h2 data-reveal class="font-mono font-bold text-3xl sm:text-5xl leading-tight max-w-3xl">
+          Tres pilares, cero pérdida.
+        </h2>
+
+        <div class="mt-14 grid gap-5 md:grid-cols-6 md:auto-rows-[minmax(150px,auto)]">
+
+          <!-- Pilar 1: el puente (grande) -->
+          <article data-card class="hard-card relative overflow-hidden p-7 sm:p-9 md:col-span-4 md:row-span-2 flex flex-col justify-between">
+            <div>
+              <h3 class="font-mono font-bold text-2xl sm:text-3xl leading-snug">Puente Diseño → Operación → Reporte</h3>
+              <p class="mt-4 max-w-xl text-sm sm:text-base text-ink/75 leading-relaxed">
+                Una sola fuente de verdad: lo que se diseñó en gabinete es exactamente
+                lo que se ejecuta en campo y lo que se reporta al cierre. Sin versiones
+                paralelas, sin "el Excel bueno".
+              </p>
+            </div>
+            <div class="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs sm:text-sm">
+              <span class="border-2 border-ink px-3 py-1.5 bg-paper">MIR</span>
+              <span class="text-crayon-orange font-bold" aria-hidden="true">→</span>
+              <span class="border-2 border-ink px-3 py-1.5 bg-paper">KANBAN</span>
+              <span class="text-crayon-orange font-bold" aria-hidden="true">→</span>
+              <span class="border-2 border-ink px-3 py-1.5 bg-paper">CAMPO</span>
+              <span class="text-crayon-orange font-bold" aria-hidden="true">→</span>
+              <span class="border-2 border-ink px-3 py-1.5 bg-kune text-white">INFORME</span>
+            </div>
+            <img src="assets/flecha.png" alt="" aria-hidden="true" loading="lazy"
+                 class="hidden md:block absolute -right-8 -top-6 w-56 opacity-90 rotate-6 pointer-events-none select-none" />
+          </article>
+
+          <!-- Pilar 2: copiloto IA -->
+          <article data-card class="hard-card relative overflow-hidden p-7 md:col-span-2">
+            <h3 class="font-mono font-bold text-lg sm:text-xl leading-snug">Copiloto Heurístico de IA Ética</h3>
+            <p class="mt-3 text-sm text-ink/75 leading-relaxed">
+              Sugiere, valida y alerta. Nunca decide por ti: cada recomendación
+              queda registrada y es trazable.
+            </p>
+            <p class="mt-3 font-hand text-crayon-red text-xl -rotate-2">la IA propone, tú dispones</p>
+            <img src="assets/amapola.png" alt="" aria-hidden="true" loading="lazy"
+                 class="absolute -right-10 -bottom-12 w-40 rotate-12 pointer-events-none select-none" />
+          </article>
+
+          <!-- Dato duro -->
+          <article data-card class="hard-card p-7 md:col-span-2 flex flex-col justify-center">
+            <p class="font-mono font-bold text-5xl sm:text-6xl text-kune leading-none">1<span class="text-2xl sm:text-3xl">×</span></p>
+            <p class="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-ink/70">una sola captura,<br/>del campo al informe</p>
+          </article>
+
+          <!-- Pilar 3: bitácora (terminal) -->
+          <article data-card class="ink-frame bg-crayon-navy text-paper p-7 md:col-span-3 overflow-hidden">
+            <h3 class="font-mono font-bold text-lg sm:text-xl leading-snug">Trazabilidad Absoluta y Cadena de Custodia</h3>
+            <div class="mt-4 font-mono text-xs sm:text-[13px] leading-relaxed text-paper/90 space-y-1" aria-label="Ejemplo de bitácora inmutable">
+              <p><span class="text-crayon-cyan">09:41:07</span> evidencia#4821 sellada <span class="text-crayon-lime">✓ hash a3f9…c21e</span></p>
+              <p><span class="text-crayon-cyan">09:41:09</span> geolocalización adjunta <span class="text-crayon-lime">✓ 19.4326, -99.1332</span></p>
+              <p><span class="text-crayon-cyan">09:42:51</span> tarea #207 → completada por brigada_03</p>
+              <p><span class="text-crayon-cyan">10:02:14</span> consulta de auditoría · <span class="text-crayon-yellow">solo lectura</span></p>
+              <p class="text-paper/70">— nada se edita, nada se borra —</p>
+            </div>
+          </article>
+
+          <!-- Territorio -->
+          <article data-card class="hard-card relative overflow-hidden p-7 md:col-span-3 flex items-end min-h-[200px]">
+            <img src="assets/ciudad.png" alt="Dibujo en crayón de una ciudad con edificios verdes, árbol azul y camión naranja" loading="lazy"
+                 class="absolute right-0 bottom-0 h-full w-auto object-contain object-right-bottom pointer-events-none select-none" />
+            <p class="relative font-hand text-2xl sm:text-3xl text-ink max-w-[55%] leading-snug -rotate-1">
+              hecho en el territorio,<br/>para el territorio
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SECCIÓN 5: FOOTER / CTA ===================== -->
+    <footer id="contacto" class="relative border-t-2 border-ink mt-12">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8 py-24 sm:py-32 text-center">
+        <h2 data-reveal class="font-mono font-bold text-3xl sm:text-5xl lg:text-6xl leading-tight max-w-4xl mx-auto">
+          Juntos, hacemos lo
+          <span class="crayon-highlight"><span>público</span></span>
+          posible.
+        </h2>
+        <p data-reveal class="mt-6 text-base sm:text-lg text-ink/70 max-w-xl mx-auto leading-relaxed">
+          Arranca un piloto con tu equipo: una política, un territorio, noventa días.
+        </p>
+
+        <!-- Formulario de solicitud de piloto -->
+        <form id="form-piloto" data-reveal novalidate
+              class="hard-card mt-12 max-w-xl mx-auto p-7 sm:p-9 text-left">
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label for="f-nombre" class="block font-mono text-xs uppercase tracking-[0.2em] text-ink/70 mb-2">Nombre</label>
+              <input id="f-nombre" name="nombre" type="text" class="campo" required
+                     maxlength="100" autocomplete="name" placeholder="María Pérez" />
+              <p class="campo-error" id="err-nombre">Escribe tu nombre.</p>
+            </div>
+            <div>
+              <label for="f-correo" class="block font-mono text-xs uppercase tracking-[0.2em] text-ink/70 mb-2">Correo</label>
+              <input id="f-correo" name="correo" type="email" class="campo" required
+                     maxlength="120" autocomplete="email" placeholder="nombre@dependencia.gob.mx" />
+              <p class="campo-error" id="err-correo">El correo necesita la forma nombre@dominio.</p>
+            </div>
+          </div>
+          <div class="mt-5">
+            <label for="f-organizacion" class="block font-mono text-xs uppercase tracking-[0.2em] text-ink/70 mb-2">Organización</label>
+            <input id="f-organizacion" name="organizacion" type="text" class="campo" required
+                   maxlength="120" autocomplete="organization" placeholder="Secretaría, municipio, OSC…" />
+            <p class="campo-error" id="err-organizacion">Dinos desde qué institución nos escribes.</p>
+          </div>
+          <div class="mt-5">
+            <label for="f-mensaje" class="block font-mono text-xs uppercase tracking-[0.2em] text-ink/70 mb-2">
+              Mensaje <span class="normal-case tracking-normal text-ink/50">(opcional)</span>
+            </label>
+            <textarea id="f-mensaje" name="mensaje" rows="4" class="campo resize-y"
+                      maxlength="1000" placeholder="Cuéntanos qué política o programa quieres pilotear."></textarea>
+          </div>
+          <button type="submit" id="form-enviar"
+                  class="mt-7 w-full font-mono font-medium bg-kune text-white px-10 py-4 text-base hover:bg-crayon-navy active:translate-y-px transition-all disabled:opacity-60 disabled:cursor-wait">
+            Solicitar Piloto
+          </button>
+          <p id="form-nota" role="status" aria-live="polite" class="hidden mt-4 text-sm text-ink/85 leading-relaxed"></p>
+          <p class="mt-4 text-sm text-ink/70 leading-relaxed">
+            O escríbenos directo:
+            <a href="mailto:contacto@institutokune.org" class="font-mono text-kune underline underline-offset-4 hover:text-crayon-navy">contacto@institutokune.org</a>
+            <button type="button" id="copiar-correo"
+                    class="ml-2 font-mono text-xs uppercase tracking-widest border-2 border-ink px-2.5 py-1 hover:bg-ink hover:text-paper active:translate-y-px transition-all">
+              Copiar
+            </button>
+          </p>
+        </form>
+
+        <div class="mt-20 pt-8 border-t border-ink/15">
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="aviso-de-privacidad.html"
+               class="inline-block font-mono text-xs uppercase tracking-widest border-2 border-ink px-4 py-2.5 hover:bg-ink hover:text-paper active:translate-y-px transition-all">
+              Aviso de Privacidad
+            </a>
+            <a href="mailto:contacto@institutokune.org"
+               class="inline-block font-mono text-xs uppercase tracking-widest border-2 border-ink px-4 py-2.5 hover:bg-ink hover:text-paper active:translate-y-px transition-all">
+              contacto@institutokune.org
+            </a>
+          </div>
+          <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-ink/70">
+            <p>© 2026 Instituto Kune A.C. · Garabato<span class="text-kune">_</span></p>
+            <p class="font-hand text-base text-kune -rotate-1">dibujado a mano, auditado a máquina</p>
+            <div class="flex gap-6 uppercase tracking-widest">
+              <a href="#inicio" class="inline-block py-2 hover:text-kune transition-colors">Inicio</a>
+              <a href="#problema" class="inline-block py-2 hover:text-kune transition-colors">Problema</a>
+              <a href="#solucion" class="inline-block py-2 hover:text-kune transition-colors">Solución</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ===================== FORMULARIO (sin dependencias) ===================== -->
+  <script>
+    (function () {
+      var CORREO = 'contacto@institutokune.org';
+      var form = document.getElementById('form-piloto');
+      if (!form) return;
+
+      var campos = {
+        nombre: document.getElementById('f-nombre'),
+        correo: document.getElementById('f-correo'),
+        organizacion: document.getElementById('f-organizacion'),
+        mensaje: document.getElementById('f-mensaje'),
+      };
+      var nota = document.getElementById('form-nota');
+      var enviar = document.getElementById('form-enviar');
+
+      function valido(campo) {
+        var v = campo.value.trim();
+        if (campo === campos.correo) return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+        if (campo === campos.mensaje) return true; // opcional
+        return v.length > 0;
+      }
+
+      function marcar(campo, ok) {
+        campo.setAttribute('aria-invalid', ok ? 'false' : 'true');
+        var err = document.getElementById('err-' + campo.name);
+        if (err) campo.setAttribute('aria-describedby', ok ? '' : err.id);
+      }
+
+      // El error se retira en cuanto el campo se corrige
+      ['nombre', 'correo', 'organizacion'].forEach(function (n) {
+        campos[n].addEventListener('input', function () {
+          if (campos[n].getAttribute('aria-invalid') === 'true' && valido(campos[n])) marcar(campos[n], true);
+        });
+      });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var primero = null;
+        ['nombre', 'correo', 'organizacion'].forEach(function (n) {
+          var ok = valido(campos[n]);
+          marcar(campos[n], ok);
+          if (!ok && !primero) primero = campos[n];
+        });
+        if (primero) { primero.focus(); return; }
+
+        // Sin backend todavía: armamos el correo con los datos capturados.
+        var cuerpo =
+          'Nombre: ' + campos.nombre.value.trim() + '\n' +
+          'Correo: ' + campos.correo.value.trim() + '\n' +
+          'Organización: ' + campos.organizacion.value.trim() + '\n\n' +
+          campos.mensaje.value.trim();
+        var url = 'mailto:' + CORREO +
+          '?subject=' + encodeURIComponent('Solicitud de Piloto — Garabato') +
+          '&body=' + encodeURIComponent(cuerpo);
+
+        enviar.disabled = true;
+        setTimeout(function () { enviar.disabled = false; }, 4000); // evita doble envío
+
+        nota.textContent = 'Abrimos tu aplicación de correo con los datos listos. ' +
+          '¿No se abrió nada? Escríbenos directo a ' + CORREO + ' — el botón Copiar te guarda la dirección.';
+        nota.classList.remove('hidden');
+
+        window.location.href = url;
+      });
+
+      // Copiar la dirección al portapapeles, con confirmación en el botón
+      var copiar = document.getElementById('copiar-correo');
+      copiar.addEventListener('click', function () {
+        function listo() {
+          copiar.textContent = 'Copiado ✓';
+          setTimeout(function () { copiar.textContent = 'Copiar'; }, 2000);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(CORREO).then(listo);
+        } else {
+          var tmp = document.createElement('textarea');
+          tmp.value = CORREO;
+          document.body.appendChild(tmp);
+          tmp.select();
+          try { document.execCommand('copy'); listo(); } catch (err) { /* el correo queda visible como texto */ }
+          document.body.removeChild(tmp);
+        }
+      });
+    })();
+  </script>
+
+  <!-- ===================== INTERACCIONES ===================== -->
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+    import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm';
+    import { ScrollTrigger } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js/+esm';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const PALETA = ['#E63B2E', '#F58220', '#FFD21F', '#7FD14C', '#1FA86B', '#29C5D6',
+                    '#5FA9F5', '#2B3FD6', '#1E2A78', '#6A3FD4', '#F977B6', '#D8B98F'];
+
+    const params = new URLSearchParams(location.search);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      || params.has('noanim'); // ?noanim: desactiva animaciones (pruebas/capturas)
+    const isMobile = window.matchMedia('(pointer: coarse), (max-width: 767px)').matches;
+
+    /* ============ A. Rastro de crayón (Canvas 2D) ============ */
+    if (!reduceMotion && !isMobile) {
+      const canvas = document.getElementById('crayon-trail');
+      const ctx = canvas.getContext('2d');
+      let segments = [];          // {x0,y0,x1,y1,color,t}
+      let last = null;            // última posición
+      let lastMoveAt = 0;
+      let color = PALETA[Math.floor(Math.random() * PALETA.length)];
+
+      const resize = () => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = innerWidth * dpr;
+        canvas.height = innerHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      window.addEventListener('mousemove', (e) => {
+        const now = performance.now();
+        // Tras una pausa, el "crayón" cambia de color
+        if (now - lastMoveAt > 400) {
+          last = null;
+          let next;
+          do { next = PALETA[Math.floor(Math.random() * PALETA.length)]; } while (next === color);
+          color = next;
+        }
+        lastMoveAt = now;
+        if (last) {
+          segments.push({ x0: last.x, y0: last.y, x1: e.clientX, y1: e.clientY, color, t: now });
+        }
+        last = { x: e.clientX, y: e.clientY };
+      });
+
+      const FADE_MS = 1800;
+      const drawTrail = () => {
+        const now = performance.now();
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        segments = segments.filter(s => now - s.t < FADE_MS);
+        for (const s of segments) {
+          const age = (now - s.t) / FADE_MS;
+          const alpha = Math.pow(1 - age, 1.6) * 0.85;
+          ctx.strokeStyle = s.color;
+          // Trazo principal grueso
+          ctx.globalAlpha = alpha;
+          ctx.lineWidth = 13;
+          ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(s.x1, s.y1); ctx.stroke();
+          // Borde ceroso desplazado (textura de crayón)
+          ctx.globalAlpha = alpha * 0.35;
+          ctx.lineWidth = 5;
+          ctx.beginPath(); ctx.moveTo(s.x0 + 2, s.y0 + 2.5); ctx.lineTo(s.x1 + 2, s.y1 + 2.5); ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(drawTrail);
+      };
+      drawTrail();
+    } else {
+      document.getElementById('crayon-trail').remove();
+    }
+
+    /* ============ B. El garabato 3D (Three.js) ============ */
+    try {
+      const canvas = document.getElementById('scene-3d');
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !isMobile });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 200);
+      camera.position.set(0, 0, 34);
+
+      scene.add(new THREE.HemisphereLight(0xffffff, 0xd8d8d2, 1.1));
+      const sun = new THREE.DirectionalLight(0xffffff, 1.4);
+      sun.position.set(6, 10, 14);
+      scene.add(sun);
+
+      // Generador pseudoaleatorio con semilla (la maraña siempre es la misma)
+      let seed = 42;
+      const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+
+      const N = 56; // puntos de control
+
+      // Estado A: maraña caótica (paseo aleatorio dentro de un elipsoide)
+      const tangled = [];
+      let p = new THREE.Vector3(0, 0, 0);
+      for (let i = 0; i < N; i++) {
+        const stepV = new THREE.Vector3(rand() - 0.5, rand() - 0.5, rand() - 0.5).multiplyScalar(11);
+        p = p.clone().add(stepV);
+        p.x = THREE.MathUtils.clamp(p.x, -13, 13);
+        p.y = THREE.MathUtils.clamp(p.y, -6.5, 6.5);
+        p.z = THREE.MathUtils.clamp(p.z, -5, 5);
+        tangled.push(p.clone());
+      }
+
+      // Estado B: circuito ordenado — 4 pistas horizontales con codos de 90°
+      const straight = [];
+      const rows = [5.4, 1.8, -1.8, -5.4];
+      const perRow = Math.floor(N / rows.length);
+      for (let r = 0; r < rows.length; r++) {
+        const y = rows[r];
+        const dir = r % 2 === 0 ? 1 : -1;
+        const count = r === rows.length - 1 ? N - perRow * (rows.length - 1) : perRow;
+        for (let i = 0; i < count; i++) {
+          const t = i / (count - 1);
+          const x = dir * (-15 + 30 * t);
+          // Pequeño jog vertical al final de cada pista (codo de circuito)
+          const isElbow = i >= count - 2 && r < rows.length - 1;
+          straight.push(new THREE.Vector3(x, isElbow ? y - 1.2 : y, 0));
+        }
+      }
+
+      const current = tangled.map(v => v.clone());
+      const curve = new THREE.CatmullRomCurve3(current);
+      const SEGMENTS = isMobile ? 120 : 240;
+      const RADIAL = isMobile ? 6 : 10;
+
+      const material = new THREE.MeshToonMaterial({ color: 0x29C5D6, transparent: true });
+      let geometry = new THREE.TubeGeometry(curve, SEGMENTS, 0.38, RADIAL, false);
+      const tube = new THREE.Mesh(geometry, material);
+      scene.add(tube);
+
+      let progress = reduceMotion ? 1 : 0;   // 0 = maraña, 1 = circuito
+      if (reduceMotion) canvas.style.opacity = '0.25'; // estado final, discreto
+      let displayed = -1;                     // último progreso renderizado
+      const mouse = { x: 0, y: 0 };
+
+      if (!isMobile) {
+        window.addEventListener('mousemove', (e) => {
+          mouse.x = (e.clientX / innerWidth) * 2 - 1;
+          mouse.y = (e.clientY / innerHeight) * 2 - 1;
+        });
+      }
+
+      const rebuild = () => {
+        const ease = progress < 0.5
+          ? 4 * progress ** 3
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2; // easeInOutCubic
+        for (let i = 0; i < N; i++) {
+          current[i].lerpVectors(tangled[i], straight[i], ease);
+        }
+        // El circuito se vuelve discreto al desenredarse: nunca compite con el texto
+        material.opacity = 1 - 0.55 * ease;
+        geometry.dispose();
+        geometry = new THREE.TubeGeometry(curve, SEGMENTS, 0.38 - 0.1 * ease, RADIAL, false);
+        tube.geometry = geometry;
+        displayed = progress;
+      };
+
+      const resize3d = () => {
+        renderer.setSize(innerWidth, innerHeight);
+        camera.aspect = innerWidth / innerHeight;
+        camera.updateProjectionMatrix();
+      };
+      resize3d();
+      window.addEventListener('resize', resize3d);
+
+      const clock = new THREE.Clock();
+      const render3d = () => {
+        const t = clock.getElapsedTime();
+        const calm = Math.pow(1 - progress, 2); // la rotación se apaga al desenredarse
+        tube.rotation.y = Math.sin(t * 0.22) * 0.45 * calm + mouse.x * 0.18 * calm;
+        tube.rotation.x = Math.cos(t * 0.18) * 0.25 * calm + mouse.y * 0.12 * calm;
+        tube.rotation.z = 0;
+        if (Math.abs(progress - displayed) > 0.0015) rebuild();
+        renderer.render(scene, camera);
+        requestAnimationFrame(render3d);
+      };
+      rebuild();
+      render3d();
+
+      /* El scroll desenreda la maraña (Hero → final de La solución) */
+      if (!reduceMotion) {
+        gsap.to({ v: 0 }, {
+          v: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#inicio',
+            start: 'top top',
+            endTrigger: '#solucion',
+            end: 'bottom 60%',
+            scrub: 1.2,
+          },
+          onUpdate() { progress = this.targets()[0].v; },
+        });
+        // El tubo se hace discreto al llegar al bento y al footer
+        gsap.to(canvas, {
+          opacity: 0.25,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#plataforma',
+            start: 'top 80%',
+            end: 'top 30%',
+            scrub: true,
+          },
+        });
+      }
+    } catch (err) {
+      // Sin WebGL el resto de la página sigue funcionando
+      document.getElementById('scene-3d').remove();
+      console.warn('Garabato 3D desactivado:', err);
+    }
+
+    /* ============ C. Revelados con scroll (GSAP) ============ */
+    if (!reduceMotion) {
+      document.querySelectorAll('[data-reveal]').forEach((el) => {
+        gsap.from(el, {
+          y: 28, autoAlpha: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+        });
+      });
+      document.querySelectorAll('[data-card]').forEach((el, i) => {
+        gsap.from(el, {
+          y: 36, autoAlpha: 0, duration: 0.8, delay: (i % 3) * 0.12, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+        });
+      });
+      document.querySelectorAll('[data-step]').forEach((el) => {
+        gsap.from(el, {
+          x: el.querySelector('.md\\:col-start-2') ? 40 : -40, autoAlpha: 0,
+          duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+        });
+      });
+
+      // El conector vertical se "dibuja" con el scroll
+      const conector = document.getElementById('conector');
+      if (conector) {
+        const len = conector.getTotalLength();
+        gsap.fromTo(conector,
+          { strokeDasharray: len, strokeDashoffset: len },
+          {
+            strokeDashoffset: 0, ease: 'none',
+            scrollTrigger: {
+              trigger: '#solucion .relative.mt-16',
+              start: 'top 75%',
+              end: 'bottom 65%',
+              scrub: 0.8,
+            },
+          });
+      }
+    }
+
+    /* ?goto=<id>: salta a una sección (pruebas/capturas) */
+    if (params.has('goto')) {
+      const destino = document.getElementById(params.get('goto'));
+      if (destino) {
+        document.documentElement.style.scrollBehavior = 'auto';
+        destino.scrollIntoView();
+      }
+    }
+  </script>
+</body>
+</html>
