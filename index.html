@@ -56,8 +56,17 @@
   </script>
 
   <style>
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y proximity;
+    }
     body { background-color: #F1F1ED; color: #17181C; }
+
+    /* Snap sections */
+    #inicio, #problema, #solucion, #plataforma, #contacto {
+      scroll-snap-align: start;
+      min-height: 100vh;
+    }
 
     h1, h2, h3, h4 { font-family: 'IBM Plex Mono', monospace; text-wrap: balance; }
     p { text-wrap: pretty; }
@@ -176,7 +185,7 @@
     .campo[aria-invalid="true"] { animation: field-shake 0.32s ease-out; }
 
     @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
+      html { scroll-behavior: auto; scroll-snap-type: none; }
       #crayon-trail { display: none; }
       .scroll-hint-arrow { animation: none; }
       .campo[aria-invalid="true"] { animation: none; }
@@ -218,6 +227,7 @@
           <a href="#problema" class="hover:text-kune transition-colors">El problema</a>
           <a href="#solucion" class="hover:text-kune transition-colors">La solución</a>
           <a href="#plataforma" class="hover:text-kune transition-colors">Plataforma</a>
+          <a href="somos-kune.html" class="hover:text-kune transition-colors">Somos Kune</a>
         </div>
         <div class="flex items-center gap-2 sm:gap-3">
           <a href="https://garabato.institutokune.org" target="_blank" rel="noopener" class="font-mono text-xs sm:text-sm font-medium border-2 border-kune text-kune px-3 sm:px-4 py-2 hover:bg-kune hover:text-white active:translate-y-px transition-all">

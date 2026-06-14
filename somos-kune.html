@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Somos Kune — Instituto Kune A.C.</title>
+  <meta name="description" content="Somos Instituto Kune A.C., una empresa social que cree que la política pública puede funcionar. Conoce a las personas detrás de Garabato." />
+
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://institutokune.org/somos-kune.html" />
+  <meta property="og:title"       content="Somos Kune — Las personas detrás de Garabato" />
+  <meta property="og:description" content="Dos personas que creen que la política pública puede funcionar. Instituto Kune A.C., empresa social GovTech." />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Somos Kune — Las personas detrás de Garabato" />
+  <meta name="twitter:description" content="Dos personas que creen que la política pública puede funcionar." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;500;600&family=Gochi+Hand&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper:   '#F1F1ED',
+            ink:     '#17181C',
+            kune:    '#2B3FD6',
+            crayon: {
+              red:    '#E63B2E',
+              orange: '#F58220',
+              yellow: '#FFD21F',
+              lime:   '#7FD14C',
+              emerald:'#1FA86B',
+              cyan:   '#29C5D6',
+              sky:    '#5FA9F5',
+              blue:   '#2B3FD6',
+              navy:   '#1E2A78',
+              purple: '#6A3FD4',
+              pink:   '#F977B6',
+              beige:  '#D8B98F',
+            },
+          },
+          fontFamily: {
+            mono: ['"IBM Plex Mono"', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            hand: ['"Gochi Hand"', 'cursive'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background-color: #F1F1ED; color: #17181C; }
+
+    h1, h2, h3, h4 { font-family: 'IBM Plex Mono', monospace; text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    #crayon-trail {
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: -1;
+    }
+
+    .glass {
+      background: rgba(241, 241, 237, 0.88);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .ink-frame, .hard-card {
+      border: 2px solid #17181C;
+      box-shadow: 5px 5px 0 0 #17181C;
+    }
+    .hard-card { background: #FBFBF9; }
+
+    .crayon-underline { position: relative; display: inline-block; }
+    .crayon-underline svg {
+      position: absolute; left: -4%; bottom: -0.55em;
+      width: 108%; height: 0.6em;
+    }
+
+    .paper-tag {
+      background: #E9DCC0;
+      border: 1.5px solid rgba(23, 24, 28, 0.25);
+      box-shadow: 2px 3px 0 rgba(23, 24, 28, 0.18);
+      transform: rotate(-3.5deg);
+    }
+
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid #2B3FD6;
+      outline-offset: 3px;
+    }
+
+    /* Founder photos */
+    .foto-fundador {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      object-position: center top;
+      filter: grayscale(100%) contrast(1.05);
+      display: block;
+      transition: transform 320ms ease-out;
+    }
+    .foto-placeholder {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background: #E2E2DD;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .foto-wrapper { overflow: hidden; }
+
+    /* Founder card */
+    .founder-card {
+      transition: box-shadow 200ms ease-out, transform 200ms ease-out;
+    }
+    .founder-card:hover {
+      box-shadow: 8px 8px 0 0 #17181C;
+      transform: translate(-1px, -1px);
+    }
+    .founder-card:hover .foto-fundador { transform: scale(1.04); }
+
+    /* Name underline slide */
+    .name-underline {
+      display: block;
+      height: 2px;
+      background: #2B3FD6;
+      width: 0;
+      transition: width 230ms ease-out;
+      margin-top: 3px;
+    }
+    .founder-card:hover .name-underline { width: 100%; }
+
+    /* Social buttons */
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 2px solid #17181C;
+      padding: 0.4rem 0.75rem;
+      color: #17181C;
+      text-decoration: none;
+      transition: background 130ms ease-out, color 130ms ease-out;
+    }
+    .social-btn:hover { background: #17181C; color: #F1F1ED; }
+    .social-btn:active { transform: translateY(1px); }
+
+    /* Divider dot */
+    .kicker {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      #crayon-trail { display: none; }
+      .founder-card, .foto-fundador, .name-underline { transition: none; }
+    }
+  </style>
+</head>
+
+<body class="font-sans antialiased overflow-x-hidden">
+
+  <a href="#main"
+     class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] font-mono text-xs bg-kune text-white px-4 py-2 transition-none">
+    Saltar al contenido
+  </a>
+
+  <svg width="0" height="0" class="absolute" aria-hidden="true">
+    <defs>
+      <filter id="crayon-rough" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" seed="7" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <canvas id="crayon-trail" aria-hidden="true"></canvas>
+
+  <!-- ===================== NAV ===================== -->
+  <header class="fixed top-0 inset-x-0 z-50">
+    <nav class="glass border-b border-ink/10" aria-label="Principal">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+        <a href="index.html" class="flex items-baseline gap-2 group">
+          <span class="font-mono font-bold text-lg tracking-tight">GARABATO<span class="text-kune">_</span></span>
+          <span class="font-hand text-lg -rotate-3 hidden sm:inline">by <img src="assets/kune-logo-azul.png" alt="Kune" class="inline h-5 align-middle" /></span>
+        </a>
+        <div class="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-widest">
+          <a href="index.html#problema" class="hover:text-kune transition-colors">El problema</a>
+          <a href="index.html#solucion" class="hover:text-kune transition-colors">La solución</a>
+          <a href="index.html#plataforma" class="hover:text-kune transition-colors">Plataforma</a>
+          <a href="somos-kune.html" class="text-kune border-b-2 border-kune pb-0.5" aria-current="page">Somos Kune</a>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <a href="https://garabato.institutokune.org" target="_blank" rel="noopener"
+             class="font-mono text-xs sm:text-sm font-medium border-2 border-kune text-kune px-3 sm:px-4 py-2 hover:bg-kune hover:text-white active:translate-y-px transition-all">
+            Probar Demo
+          </a>
+          <a href="index.html#contacto"
+             class="font-mono text-xs sm:text-sm font-medium bg-kune text-white px-4 py-2.5 hover:bg-crayon-navy active:translate-y-px transition-all">
+            Solicitar Piloto
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ===================== SOMOS KUNE — layout principal ===================== -->
+    <section class="min-h-screen pt-32 pb-24 sm:pt-40 sm:pb-28">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8">
+
+        <!-- Eyebrow -->
+        <p data-reveal class="kicker text-ink/50 mb-10">
+          <span class="crayon-underline">
+            Instituto Kune A.C.
+            <svg viewBox="0 0 160 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M2 5.5 C 30 3, 70 7, 110 4.5 C 135 3, 152 6, 158 5" stroke="#F58220" stroke-width="2.5" stroke-linecap="round" fill="none" filter="url(#crayon-rough)" />
+            </svg>
+          </span>
+        </p>
+
+        <!-- Two-column: left = texto, right = cards side by side -->
+        <div class="grid lg:grid-cols-2 gap-12 xl:gap-16 items-start">
+
+          <!-- LEFT — manifiesto -->
+          <div class="max-w-xl">
+
+            <div data-reveal class="relative inline-block mb-10">
+              <h1 class="font-mono font-bold leading-[0.92] tracking-tight text-[clamp(3.2rem,8vw,6rem)]">
+                SOMOS<br/>KUNE
+              </h1>
+              <span class="paper-tag inline-block font-hand text-lg px-3 py-0.5 absolute -right-6 bottom-1">
+                A.C.
+              </span>
+            </div>
+
+            <p data-reveal class="text-lg sm:text-xl text-ink/85 leading-relaxed mb-7">
+              Cuando niños, nadie nos preguntaba si teníamos permiso para pensar
+              cómo mejorar nuestra ciudad. Dibujábamos parques, calles y edificios
+              con el crayón que teníamos a la mano.
+              <strong class="font-semibold text-ink">Esa lógica nunca debió perderse.</strong>
+            </p>
+
+            <p data-reveal class="text-base sm:text-lg text-ink/75 leading-relaxed mb-7">
+              Kune nació de una convicción: la política pública es demasiado importante
+              para quedar atrapada en expedientes que nadie lee. Las personas que diseñan
+              programas, que coordinan campo, que auditan resultados —merecen herramientas
+              a la altura de su trabajo.
+              <strong class="font-semibold text-ink">Herramientas que se puedan auditar, no solo presentar.</strong>
+            </p>
+
+            <p data-reveal class="text-base sm:text-lg text-ink/75 leading-relaxed mb-10">
+              Por eso nos llamamos Kune —del latín <em>co</em>, juntos— y por eso Garabato
+              parece un expediente sobre el que alguien dibujó con crayón.
+              La burocracia no desaparece: <strong class="font-semibold text-ink">se vuelve ágil.</strong>
+            </p>
+
+            <p data-reveal class="font-hand text-2xl text-kune -rotate-1 inline-block">
+              dibujado a mano, auditado a máquina
+            </p>
+
+          </div>
+
+          <!-- RIGHT — founder cards side by side -->
+          <div class="grid sm:grid-cols-2 gap-6">
+
+            <!-- Guillermo Araiza — primero -->
+            <article data-card class="founder-card hard-card ink-frame"
+                     aria-label="Guillermo Araiza, Co-Fundador">
+              <div class="foto-wrapper">
+                <img
+                  src="assets/foto-memo.jpg"
+                  alt="Guillermo Araiza, Co-Fundador de Kune"
+                  class="foto-fundador"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                />
+                <div class="foto-placeholder" style="display:none;" aria-hidden="true">
+                  <span class="font-mono font-bold text-5xl text-ink/20">GA</span>
+                </div>
+              </div>
+              <div class="p-4 sm:p-5">
+                <h2 class="font-mono font-bold text-lg leading-tight">Guillermo Araiza</h2>
+                <span class="name-underline" aria-hidden="true"></span>
+                <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-ink/55 mt-1.5 mb-3">Co-Fundador</p>
+                <p class="text-sm text-ink/75 leading-relaxed mb-4">
+                  Tecnología y arquitectura de producto.
+                </p>
+                <div class="flex gap-2 flex-wrap">
+                  <a href="#" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn de Guillermo Araiza">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    LinkedIn
+                  </a>
+                  <a href="#" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram de Guillermo Araiza">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    Instagram
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Diego González — segundo -->
+            <article data-card class="founder-card hard-card ink-frame"
+                     aria-label="Diego González, Co-Fundador">
+              <div class="foto-wrapper">
+                <img
+                  src="assets/foto-diego.jpg"
+                  alt="Diego González, Co-Fundador de Kune"
+                  class="foto-fundador"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"
+                />
+                <div class="foto-placeholder" style="display:none;" aria-hidden="true">
+                  <span class="font-mono font-bold text-5xl text-ink/20">DG</span>
+                </div>
+              </div>
+              <div class="p-4 sm:p-5">
+                <h2 class="font-mono font-bold text-lg leading-tight">Diego González</h2>
+                <span class="name-underline" aria-hidden="true"></span>
+                <p class="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-ink/55 mt-1.5 mb-3">Co-Fundador</p>
+                <p class="text-sm text-ink/75 leading-relaxed mb-4">
+                  Diseño de políticas públicas y estrategia de producto.
+                </p>
+                <div class="flex gap-2 flex-wrap">
+                  <a href="#" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn de Diego González">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    LinkedIn
+                  </a>
+                  <a href="#" target="_blank" rel="noopener" class="social-btn" aria-label="Instagram de Diego González">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    Instagram
+                  </a>
+                </div>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="py-12 border-t border-ink/10">
+      <div class="max-w-7xl mx-auto px-5 sm:px-8">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="aviso-de-privacidad.html"
+             class="inline-block font-mono text-xs uppercase tracking-widest border-2 border-ink px-4 py-2.5 hover:bg-ink hover:text-paper active:translate-y-px transition-all">
+            Aviso de Privacidad
+          </a>
+          <a href="mailto:contacto@institutokune.org"
+             class="inline-block font-mono text-xs uppercase tracking-widest border-2 border-ink px-4 py-2.5 hover:bg-ink hover:text-paper active:translate-y-px transition-all">
+            contacto@institutokune.org
+          </a>
+        </div>
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-ink/70">
+          <p>© 2026 Instituto Kune A.C. · Garabato<span class="text-kune">_</span></p>
+          <p class="font-hand text-base text-kune -rotate-1">dibujado a mano, auditado a máquina</p>
+          <div class="flex gap-6 uppercase tracking-widest">
+            <a href="index.html" class="inline-block py-2 hover:text-kune transition-colors">Inicio</a>
+            <a href="index.html#problema" class="inline-block py-2 hover:text-kune transition-colors">Problema</a>
+            <a href="index.html#solucion" class="inline-block py-2 hover:text-kune transition-colors">Solución</a>
+            <a href="index.html#plataforma" class="inline-block py-2 hover:text-kune transition-colors">Plataforma</a>
+            <a href="somos-kune.html" class="inline-block py-2 text-kune">Somos Kune</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ===================== INTERACCIONES ===================== -->
+  <script type="module">
+    import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm';
+    import { ScrollTrigger } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js/+esm';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const params = new URLSearchParams(location.search);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      || params.has('noanim');
+    const isMobile = window.matchMedia('(pointer: coarse), (max-width: 767px)').matches;
+
+    /* Crayon trail — desktop only */
+    if (!isMobile) {
+      const PALETA = ['#E63B2E','#F58220','#FFD21F','#7FD14C','#1FA86B','#29C5D6',
+                      '#5FA9F5','#2B3FD6','#1E2A78','#6A3FD4','#F977B6','#D8B98F'];
+      const canvas = document.getElementById('crayon-trail');
+      const ctx = canvas.getContext('2d');
+      let segments = [], last = null, color = PALETA[0], lastMoveAt = 0;
+
+      const resize = () => {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = innerWidth * dpr;
+        canvas.height = innerHeight * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      window.addEventListener('mousemove', (e) => {
+        const now = performance.now();
+        if (now - lastMoveAt > 400) {
+          last = null;
+          let next;
+          do { next = PALETA[Math.floor(Math.random() * PALETA.length)]; } while (next === color);
+          color = next;
+        }
+        lastMoveAt = now;
+        if (last) segments.push({ x0: last.x, y0: last.y, x1: e.clientX, y1: e.clientY, color, t: now });
+        last = { x: e.clientX, y: e.clientY };
+      });
+
+      const FADE_MS = 1800;
+      const drawTrail = () => {
+        const now = performance.now();
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        segments = segments.filter(s => now - s.t < FADE_MS);
+        for (const s of segments) {
+          const age = (now - s.t) / FADE_MS;
+          const alpha = Math.pow(1 - age, 1.6) * 0.85;
+          ctx.strokeStyle = s.color;
+          ctx.globalAlpha = alpha;
+          ctx.lineWidth = 13;
+          ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(s.x1, s.y1); ctx.stroke();
+          ctx.globalAlpha = alpha * 0.35;
+          ctx.lineWidth = 5;
+          ctx.beginPath(); ctx.moveTo(s.x0 + 2, s.y0 + 2.5); ctx.lineTo(s.x1 + 2, s.y1 + 2.5); ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(drawTrail);
+      };
+      drawTrail();
+    } else {
+      document.getElementById('crayon-trail').remove();
+    }
+
+    /* GSAP */
+    if (!reduceMotion) {
+      gsap.from('header nav', { y: -64, opacity: 0, duration: 0.55, ease: 'power3.out', delay: 0.08 });
+
+      // Eyebrow + title + paragraphs stagger in on load
+      const heroEls = [...document.querySelectorAll('[data-reveal]')];
+      const heroTl = gsap.timeline({ delay: 0.15 });
+      heroEls.forEach((el, i) => {
+        heroTl.from(el, { y: 22, opacity: 0, duration: 0.65, ease: 'power3.out', clearProps: 'transform,opacity' }, i * 0.10);
+      });
+
+      // Cards enter from right, staggered
+      document.querySelectorAll('[data-card]').forEach((el, i) => {
+        gsap.from(el, {
+          x: 50, opacity: 0, duration: 0.85, delay: i * 0.15, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+        });
+      });
+
+      // Crayon underline draw-in
+      document.querySelectorAll('.crayon-underline svg path').forEach((path) => {
+        const len = path.getTotalLength();
+        gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+        gsap.to(path, {
+          strokeDashoffset: 0, duration: 0.65, ease: 'power2.out',
+          scrollTrigger: { trigger: path, start: 'top 95%', once: true },
+        });
+      });
+    }
+  </script>
+
+</body>
+</html>
