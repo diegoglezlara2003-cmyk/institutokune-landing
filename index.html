@@ -6,6 +6,15 @@
   <title>Garabato by Kune — GovTech que transforma política pública en tareas ágiles</title>
   <meta name="description" content="Garabato convierte el diseño de políticas públicas en tareas ágiles, ejecutables en campo y 100% auditables. Del MIR al Kanban, de la calle a la bitácora." />
 
+  <!-- Open Graph / redes sociales -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://institutokune.org/" />
+  <meta property="og:title"       content="Garabato by Kune — GovTech que transforma política pública en tareas ágiles" />
+  <meta property="og:description" content="Garabato convierte el diseño de políticas públicas en tareas ágiles, ejecutables en campo y 100% auditables. Del MIR al Kanban, de la calle a la bitácora." />
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Garabato by Kune — GovTech que transforma política pública en tareas ágiles" />
+  <meta name="twitter:description" content="Garabato convierte el diseño de políticas públicas en tareas ágiles, ejecutables en campo y 100% auditables. Del MIR al Kanban, de la calle a la bitácora." />
+
   <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -131,7 +140,7 @@
       color: #17181C;
       overflow-wrap: break-word;
     }
-    .campo::placeholder { color: rgba(23, 24, 28, 0.55); }
+    .campo::placeholder { color: rgba(23, 24, 28, 0.72); }
     .campo:focus-visible {
       outline: 3px solid #2B3FD6;
       outline-offset: 2px;
@@ -148,14 +157,40 @@
     /* Animaciones reveladas por GSAP: estados iniciales se asignan por JS
        para que el contenido sea visible sin JavaScript. */
 
+    /* Transición suave en los campos del formulario */
+    .campo { transition: outline-offset 120ms ease-out, border-color 150ms ease-out; }
+
+    /* Pulso del hint de scroll */
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(5px); }
+    }
+    .scroll-hint-arrow { animation: bob 1.9s ease-in-out infinite; }
+
+    /* Shake en campo con error */
+    @keyframes field-shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+    .campo[aria-invalid="true"] { animation: field-shake 0.32s ease-out; }
+
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       #crayon-trail { display: none; }
+      .scroll-hint-arrow { animation: none; }
+      .campo[aria-invalid="true"] { animation: none; }
     }
   </style>
 </head>
 
 <body class="font-sans antialiased overflow-x-hidden">
+
+  <!-- Saltar al contenido: accesible para teclado y lectores de pantalla -->
+  <a href="#main"
+     class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] font-mono text-xs bg-kune text-white px-4 py-2 transition-none">
+    Saltar al contenido
+  </a>
 
   <!-- Filtro SVG global: convierte trazos limpios en trazos de crayón -->
   <svg width="0" height="0" class="absolute" aria-hidden="true">
@@ -177,7 +212,7 @@
       <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
         <a href="#inicio" class="flex items-baseline gap-2 group">
           <span class="font-mono font-bold text-lg tracking-tight">GARABATO<span class="text-kune">_</span></span>
-          <span class="font-hand text-kune text-lg -rotate-3 hidden sm:inline">by kune</span>
+          <span class="font-hand text-lg -rotate-3 hidden sm:inline">by <img src="assets/kune-logo-azul.png" alt="Kune" class="inline h-5 align-middle" /></span>
         </a>
         <div class="hidden md:flex items-center gap-8 font-mono text-xs uppercase tracking-widest">
           <a href="#problema" class="hover:text-kune transition-colors">El problema</a>
@@ -210,8 +245,8 @@
           <h1 class="font-mono font-bold leading-[0.95] tracking-tight text-[clamp(3.2rem,12vw,9.5rem)]">
             GARABATO
           </h1>
-          <span class="paper-tag inline-block font-hand text-kune text-2xl sm:text-4xl px-4 py-1 mt-3 sm:mt-0 sm:absolute sm:right-[4%] sm:-bottom-5 lg:right-[16%]">
-            by KUNE
+          <span class="paper-tag inline-block font-hand text-2xl sm:text-4xl px-4 py-1 mt-3 sm:mt-0 sm:absolute sm:right-[4%] sm:-bottom-5 lg:right-[16%]">
+            by <img src="assets/kune-logo-azul.png" alt="Kune" class="inline h-6 sm:h-9 align-middle" />
           </span>
         </div>
 
@@ -221,13 +256,13 @@
         </p>
 
         <div data-reveal class="mt-10 flex flex-wrap items-center gap-4">
-          <a href="https://garabato.institutokune.org" target="_blank" rel="noopener" class="font-mono font-medium border-2 border-kune text-kune px-7 py-[14px] text-sm sm:text-base hover:bg-kune hover:text-white active:translate-y-px transition-all">
+          <a href="https://garabato.institutokune.org" target="_blank" rel="noopener" class="font-mono font-medium border-2 border-kune text-kune px-7 py-4 text-sm sm:text-base hover:bg-kune hover:text-white active:translate-y-px transition-all">
             Probar Demo
           </a>
           <a href="#contacto" class="font-mono font-medium bg-kune text-white px-7 py-4 text-sm sm:text-base hover:bg-crayon-navy active:translate-y-px transition-all">
             Solicitar Piloto
           </a>
-          <a href="#solucion" class="font-mono font-medium border-2 border-ink px-7 py-[14px] text-sm sm:text-base hover:bg-ink hover:text-paper active:translate-y-px transition-all">
+          <a href="#solucion" class="font-mono font-medium border-2 border-ink px-7 py-4 text-sm sm:text-base hover:bg-ink hover:text-paper active:translate-y-px transition-all">
             Ver cómo funciona
           </a>
         </div>
@@ -240,7 +275,7 @@
       <!-- Pista de scroll -->
       <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" aria-hidden="true">
         <span class="font-mono text-[11px] uppercase tracking-[0.3em] text-ink/60">( scroll para desenredar )</span>
-        <svg width="18" height="34" viewBox="0 0 18 34" fill="none" style="filter:url(#crayon-rough)">
+        <svg width="18" height="34" viewBox="0 0 18 34" fill="none" class="scroll-hint-arrow" style="filter:url(#crayon-rough)">
           <path d="M9 2 C 7 9, 11 13, 9 20 L 9 30 M 3 24 L 9 31 L 15 24" stroke="#2B3FD6" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
@@ -464,8 +499,8 @@
 
           <!-- Dato duro -->
           <article data-card class="hard-card p-7 md:col-span-2 flex flex-col justify-center">
-            <p class="font-mono font-bold text-5xl sm:text-6xl text-kune leading-none">1<span class="text-2xl sm:text-3xl">×</span></p>
-            <p class="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-ink/70">una sola captura,<br/>del campo al informe</p>
+            <p class="font-mono font-bold text-5xl sm:text-6xl text-kune leading-none">1</p>
+            <p class="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-ink/70">captura única<br/>del campo al informe</p>
           </article>
 
           <!-- Pilar 3: bitácora (terminal) -->
@@ -567,6 +602,8 @@
               <a href="#inicio" class="inline-block py-2 hover:text-kune transition-colors">Inicio</a>
               <a href="#problema" class="inline-block py-2 hover:text-kune transition-colors">Problema</a>
               <a href="#solucion" class="inline-block py-2 hover:text-kune transition-colors">Solución</a>
+              <a href="#plataforma" class="inline-block py-2 hover:text-kune transition-colors">Plataforma</a>
+              <a href="#contacto" class="inline-block py-2 hover:text-kune transition-colors">Contacto</a>
             </div>
           </div>
         </div>
@@ -600,7 +637,10 @@
       function marcar(campo, ok) {
         campo.setAttribute('aria-invalid', ok ? 'false' : 'true');
         var err = document.getElementById('err-' + campo.name);
-        if (err) campo.setAttribute('aria-describedby', ok ? '' : err.id);
+        if (err) {
+          if (ok) campo.removeAttribute('aria-describedby');
+          else campo.setAttribute('aria-describedby', err.id);
+        }
       }
 
       // El error se retira en cuanto el campo se corrige
@@ -880,29 +920,58 @@
       console.warn('Garabato 3D desactivado:', err);
     }
 
-    /* ============ C. Revelados con scroll (GSAP) ============ */
+    /* ============ C. Animaciones (GSAP) ============ */
     if (!reduceMotion) {
-      document.querySelectorAll('[data-reveal]').forEach((el) => {
+
+      // Nav: desliza desde arriba al cargar
+      gsap.from('header nav', { y: -64, opacity: 0, duration: 0.55, ease: 'power3.out', delay: 0.08 });
+
+      // Hero: secuencia orquestada en carga (no reflejo de scroll uniforme)
+      const heroReveal = [...document.querySelectorAll('#inicio [data-reveal]')];
+      const scrollHintEl = document.querySelector('#inicio .absolute.bottom-8');
+      const heroTl = gsap.timeline({ delay: 0.2 });
+      heroReveal.forEach((el, i) => {
+        heroTl.from(el, {
+          y: 22, opacity: 0, duration: 0.65, ease: 'power3.out', clearProps: 'transform,opacity'
+        }, i * 0.11);
+      });
+      if (scrollHintEl) {
+        heroTl.from(scrollHintEl, { opacity: 0, y: 8, duration: 0.5, ease: 'power2.out' },
+          heroReveal.length * 0.11 + 0.12);
+      }
+
+      // Secciones: cada reveal es puntual y específico a su sección
+      document.querySelectorAll('[data-reveal]:not(#inicio [data-reveal])').forEach((el) => {
         gsap.from(el, {
-          y: 28, autoAlpha: 0, duration: 0.9, ease: 'power3.out',
+          y: 28, opacity: 0, duration: 0.9, ease: 'power3.out',
           scrollTrigger: { trigger: el, start: 'top 88%', once: true },
         });
       });
       document.querySelectorAll('[data-card]').forEach((el, i) => {
         gsap.from(el, {
-          y: 36, autoAlpha: 0, duration: 0.8, delay: (i % 3) * 0.12, ease: 'power3.out',
+          y: 36, opacity: 0, duration: 0.8, delay: (i % 3) * 0.12, ease: 'power3.out',
           scrollTrigger: { trigger: el, start: 'top 90%', once: true },
         });
       });
       document.querySelectorAll('[data-step]').forEach((el) => {
         gsap.from(el, {
-          x: el.querySelector('.md\\:col-start-2') ? 40 : -40, autoAlpha: 0,
+          x: el.querySelector('.md\\:col-start-2') ? 40 : -40, opacity: 0,
           duration: 0.9, ease: 'power3.out',
           scrollTrigger: { trigger: el, start: 'top 85%', once: true },
         });
       });
 
-      // El conector vertical se "dibuja" con el scroll
+      // Kickers: el trazo de crayón se dibuja al entrar en vista
+      document.querySelectorAll('.crayon-underline svg path').forEach((path) => {
+        const len = path.getTotalLength();
+        gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+        gsap.to(path, {
+          strokeDashoffset: 0, duration: 0.65, ease: 'power2.out',
+          scrollTrigger: { trigger: path, start: 'top 90%', once: true },
+        });
+      });
+
+      // Conector vertical se "dibuja" con el scroll
       const conector = document.getElementById('conector');
       if (conector) {
         const len = conector.getTotalLength();
@@ -926,6 +995,7 @@
       if (destino) {
         document.documentElement.style.scrollBehavior = 'auto';
         destino.scrollIntoView();
+        ScrollTrigger.refresh();
       }
     }
   </script>
