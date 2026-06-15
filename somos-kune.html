@@ -18,6 +18,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;500;600&family=Gochi+Hand&display=swap" rel="stylesheet" />
 
+  <!-- Dirección de transición: se lee antes del primer paint -->
+  <script>(function(){var d=sessionStorage.getItem('kune-nav-dir');if(d==='back'){document.documentElement.classList.add('nav-back');sessionStorage.removeItem('kune-nav-dir');}})();</script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -167,7 +170,42 @@
       html { scroll-behavior: auto; }
       #crayon-trail { display: none; }
       .founder-card, .foto-fundador, .name-underline { transition: none; }
+      ::view-transition-old(kune-main),
+      ::view-transition-new(kune-main) { animation: none; }
     }
+
+    /* ── View Transitions: deslizamiento horizontal entre páginas ─────────── */
+    @view-transition { navigation: auto; }
+
+    header { view-transition-name: kune-nav; }
+    main   { view-transition-name: kune-main; }
+
+    ::view-transition-old(kune-nav),
+    ::view-transition-new(kune-nav) { animation: none; }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) { animation: none; }
+
+    /* Avance → sale izquierda, entra derecha */
+    ::view-transition-old(kune-main) {
+      animation: 420ms cubic-bezier(0.16,1,0.3,1) both kune-exit-left;
+    }
+    ::view-transition-new(kune-main) {
+      animation: 420ms cubic-bezier(0.16,1,0.3,1) both kune-enter-right;
+    }
+
+    /* Retroceso → inverso */
+    html.nav-back::view-transition-old(kune-main) {
+      animation: 420ms cubic-bezier(0.16,1,0.3,1) both kune-exit-right;
+    }
+    html.nav-back::view-transition-new(kune-main) {
+      animation: 420ms cubic-bezier(0.16,1,0.3,1) both kune-enter-left;
+    }
+
+    @keyframes kune-exit-left   { to   { transform: translateX(-100%); } }
+    @keyframes kune-enter-right { from { transform: translateX(100%);  } }
+    @keyframes kune-exit-right  { to   { transform: translateX(100%);  } }
+    @keyframes kune-enter-left  { from { transform: translateX(-100%); } }
   </style>
 </head>
 
@@ -474,6 +512,24 @@
           strokeDashoffset: 0, duration: 0.65, ease: 'power2.out',
           scrollTrigger: { trigger: path, start: 'top 95%', once: true },
         });
+      });
+    }
+
+    // View Transition direction detection
+    document.querySelectorAll('a[href^="index.html"], a[href="/"], a[href="./"]').forEach(function(a) {
+      a.addEventListener('click', function() {
+        sessionStorage.setItem('kune-nav-dir', 'back');
+      });
+    });
+
+    if (window.navigation) {
+      window.navigation.addEventListener('navigate', function(e) {
+        if (e.navigationType === 'traverse') {
+          var isBack = e.destination.index < window.navigation.currentEntry.index;
+          isBack
+            ? sessionStorage.setItem('kune-nav-dir', 'back')
+            : sessionStorage.removeItem('kune-nav-dir');
+        }
       });
     }
   </script>

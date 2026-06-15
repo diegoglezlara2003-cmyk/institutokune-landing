@@ -15,6 +15,9 @@
   <meta name="twitter:title"       content="Garabato by Kune — GovTech que transforma política pública en tareas ágiles" />
   <meta name="twitter:description" content="Garabato convierte el diseño de políticas públicas en tareas ágiles, ejecutables en campo y 100% auditables. Del MIR al Kanban, de la calle a la bitácora." />
 
+  <!-- Dirección de transición: se lee antes del primer paint -->
+  <script>(function(){var d=sessionStorage.getItem('kune-nav-dir');if(d==='back'){document.documentElement.classList.add('nav-back');sessionStorage.removeItem('kune-nav-dir');}})();</script>
+
   <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -189,7 +192,44 @@
       #crayon-trail { display: none; }
       .scroll-hint-arrow { animation: none; }
       .campo[aria-invalid="true"] { animation: none; }
+      ::view-transition-old(kune-main),
+      ::view-transition-new(kune-main) { animation: none; }
     }
+
+    /* ── View Transitions: deslizamiento horizontal entre páginas ─────────── */
+    @view-transition { navigation: auto; }
+
+    /* El nav es el mismo en ambas páginas — se queda fijo */
+    header { view-transition-name: kune-nav; }
+    main   { view-transition-name: kune-main; }
+
+    ::view-transition-old(kune-nav),
+    ::view-transition-new(kune-nav) { animation: none; }
+
+    /* Fondo: sin animación (mismo color en ambas páginas) */
+    ::view-transition-old(root),
+    ::view-transition-new(root) { animation: none; }
+
+    /* Avance → contenido sale por la izquierda, entra por la derecha */
+    ::view-transition-old(kune-main) {
+      animation: 420ms cubic-bezier(0.16,1,0.3,1) both kune-exit-left;
+    }
+    ::view-transition-new(kune-main) {
+      animation: 420ms cubic-bezier(0.16,1,0.3,1) both kune-enter-right;
+    }
+
+    /* Retroceso → inverso */
+    html.nav-back::view-transition-old(kune-main) {
+      animation: 420ms cubic-bezier(0.16,1,0.3,1) both kune-exit-right;
+    }
+    html.nav-back::view-transition-new(kune-main) {
+      animation: 420ms cubic-bezier(0.16,1,0.3,1) both kune-enter-left;
+    }
+
+    @keyframes kune-exit-left   { to   { transform: translateX(-100%); } }
+    @keyframes kune-enter-right { from { transform: translateX(100%);  } }
+    @keyframes kune-exit-right  { to   { transform: translateX(100%);  } }
+    @keyframes kune-enter-left  { from { transform: translateX(-100%); } }
   </style>
 </head>
 
@@ -1007,6 +1047,18 @@
         destino.scrollIntoView();
         ScrollTrigger.refresh();
       }
+    }
+
+    /* Detectar back/forward del navegador para invertir la transición */
+    if (window.navigation) {
+      window.navigation.addEventListener('navigate', (e) => {
+        if (e.navigationType === 'traverse') {
+          const isBack = e.destination.index < window.navigation.currentEntry.index;
+          isBack
+            ? sessionStorage.setItem('kune-nav-dir', 'back')
+            : sessionStorage.removeItem('kune-nav-dir');
+        }
+      });
     }
   </script>
 </body>
