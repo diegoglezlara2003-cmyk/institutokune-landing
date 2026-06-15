@@ -295,9 +295,6 @@
           <h1 class="font-mono font-bold leading-[0.95] tracking-tight text-[clamp(3.2rem,12vw,9.5rem)]">
             GARABATO
           </h1>
-          <span class="paper-tag inline-block font-hand text-2xl sm:text-4xl px-4 py-1 mt-3 sm:mt-0 sm:absolute sm:right-[4%] sm:-bottom-5 lg:right-[16%]">
-            by <img src="assets/kune-logo-azul.png" alt="Kune" class="inline h-6 sm:h-9 align-middle" />
-          </span>
         </div>
 
         <p data-reveal class="mt-10 sm:mt-14 max-w-2xl text-lg sm:text-xl text-ink/80 leading-relaxed">
@@ -837,7 +834,7 @@
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 200);
-      camera.position.set(0, 0, 34);
+      camera.position.set(isMobile ? 0 : -20, 0, 34);
 
       scene.add(new THREE.HemisphereLight(0xffffff, 0xd8d8d2, 1.1));
       const sun = new THREE.DirectionalLight(0xffffff, 1.4);
@@ -872,7 +869,7 @@
         const count = r === rows.length - 1 ? N - perRow * (rows.length - 1) : perRow;
         for (let i = 0; i < count; i++) {
           const t = i / (count - 1);
-          const x = dir * (-15 + 30 * t);
+          const x = camera.position.x + dir * (-13 + 26 * t);
           // Pequeño jog vertical al final de cada pista (codo de circuito)
           const isElbow = i >= count - 2 && r < rows.length - 1;
           straight.push(new THREE.Vector3(x, isElbow ? y - 1.2 : y, 0));
