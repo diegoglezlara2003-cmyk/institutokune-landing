@@ -286,8 +286,8 @@
         </div>
 
         <p data-reveal class="mt-10 sm:mt-14 max-w-2xl text-lg sm:text-xl text-ink/80 leading-relaxed">
-          Del diseño de una política pública a la ejecución en campo —
-          un solo sistema, sin PDFs perdidos y con evidencia auditable en tiempo real.
+          Del diseño de una política pública a la ejecución en campo.
+          Un solo sistema, sin PDFs perdidos, con monitoreo y transparencia en tiempo real.
         </p>
 
         <div data-reveal class="mt-10 flex flex-wrap items-center gap-4">
@@ -307,7 +307,7 @@
         </p>
 
         <p data-reveal class="mt-6 font-mono text-xs text-ink/70 tracking-wide">
-          MIR&nbsp;→&nbsp;Kanban&nbsp;→&nbsp;Campo&nbsp;→&nbsp;Bitácora
+          Diseña&nbsp;→&nbsp;Agiliza&nbsp;→&nbsp;Ejecuta&nbsp;→&nbsp;Transparenta
         </p>
       </div>
 
@@ -390,7 +390,7 @@
             </svg>
             <div class="glass relative m-3 p-5 border border-ink/15">
               <h3 class="font-mono font-bold text-lg">Opacidad</h3>
-              <p class="mt-2 text-sm text-ink/85 leading-relaxed">La evidencia física se pierde; cada auditoría empieza desde cero con más oficios.</p>
+              <p class="mt-2 text-sm text-ink/85 leading-relaxed">La evidencia física se pierde; no existen datos digitales y la transparencia se vuelve imposible.</p>
             </div>
           </article>
         </div>
@@ -413,73 +413,82 @@
           Del garabato al circuito.
         </h2>
         <p data-reveal class="mt-6 max-w-2xl text-base sm:text-lg text-ink/75 leading-relaxed">
-          Garabato toma el diseño de tu política y lo desenreda en cuatro pasos:
+          Garabato te ayuda con el diseño de tu política y lo desenreda en cuatro pasos:
           cada uno deja un rastro verificable que conecta con el siguiente.
         </p>
 
         <!-- Flujo vertical -->
-        <div class="relative mt-16 max-w-4xl mx-auto">
+        <div class="mt-16 relative" id="flujo-pasos">
 
-          <!-- Conector dibujado (se traza con el scroll) -->
-          <svg class="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-0 h-full w-4" viewBox="0 0 16 1000" preserveAspectRatio="none" fill="none" aria-hidden="true" style="filter:url(#crayon-rough)">
-            <path id="conector" d="M8 0 C 4 120, 12 240, 8 360 C 5 480, 11 600, 8 720 C 6 840, 10 930, 8 1000"
-                  stroke="#2B3FD6" stroke-width="4" stroke-linecap="round"/>
+          <!-- Línea conector vertical (estilo crayón) -->
+          <svg class="conector absolute hidden sm:block" aria-hidden="true"
+               style="left:0.7rem;top:1.75rem;width:2px;height:calc(100% - 3.5rem);filter:url(#crayon-rough);"
+               viewBox="0 0 2 900" preserveAspectRatio="none" fill="none">
+            <path class="conector-trazo" pathLength="100"
+                  d="M1 0 C 1.5 150, 0.5 300, 1 450 C 1.5 600, 0.5 750, 1 900"
+                  stroke="rgba(23,24,28,0.22)" stroke-width="2" stroke-linecap="round"/>
           </svg>
 
-          <ol class="space-y-12 md:space-y-20">
-            <!-- Paso 1 -->
-            <li data-step class="relative pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-16">
-              <div class="md:text-right md:pr-12">
-                <span class="font-mono text-xs font-medium tracking-[0.25em] text-kune">PASO 01 / DISEÑA</span>
-                <h3 class="font-mono font-bold text-xl sm:text-2xl mt-2">Copiloto IA valida la MIR</h3>
-                <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
-                  Cargas tu Matriz de Indicadores para Resultados y el copiloto
-                  detecta huecos lógicos antes de que lleguen a la calle.
-                </p>
-              </div>
-              <span class="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-kune border-2 border-ink" aria-hidden="true"></span>
-            </li>
+          <div class="space-y-14 sm:pl-10">
 
-            <!-- Paso 2 -->
-            <li data-step class="relative pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-16">
-              <div class="md:col-start-2 md:pl-12">
-                <span class="font-mono text-xs font-medium tracking-[0.25em] text-crayon-orange">PASO 02 / AGILIZA</span>
-                <h3 class="font-mono font-bold text-xl sm:text-2xl mt-2">Conversión a Kanban</h3>
-                <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
-                  Cada objetivo se vuelve una tarjeta con responsable, plazo y
-                  evidencia requerida. La estrategia ahora es un tablero operativo.
+            <!-- Paso 01 — Diseña -->
+            <div data-step="0" class="relative sm:grid sm:grid-cols-[auto_1fr] sm:gap-8 items-start">
+              <div class="hidden sm:block flex-shrink-0" style="margin-left:-0.7rem;">
+                <div class="w-[1.1rem] h-[1.1rem] border-2 border-kune bg-paper"></div>
+              </div>
+              <div>
+                <p class="font-mono text-[0.62rem] font-medium tracking-[0.22em] text-kune mb-2">PASO 01 / DISEÑA</p>
+                <h3 class="font-mono font-bold text-xl sm:text-2xl leading-snug mb-3">Copiloto de impacto</h3>
+                <p class="text-sm sm:text-base text-ink/70 leading-relaxed max-w-xl">
+                  Apoya en diseñar la Teoría de Cambio de tu programa y la convierte fácilmente en una Matriz de Indicadores para Resultados (MIR).
                 </p>
               </div>
-              <span class="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-crayon-orange border-2 border-ink" aria-hidden="true"></span>
-            </li>
+            </div>
 
-            <!-- Paso 3 -->
-            <li data-step class="relative pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-16">
-              <div class="md:text-right md:pr-12">
-                <span class="font-mono text-xs font-medium tracking-[0.25em] text-crayon-emerald">PASO 03 / EJECUTA</span>
-                <h3 class="font-mono font-bold text-xl sm:text-2xl mt-2">App offline-first</h3>
-                <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
-                  El equipo de campo captura una sola vez, sin señal. La evidencia
-                  se georreferencia y sincroniza cuando vuelve la conexión.
+            <!-- Paso 02 — Agiliza -->
+            <div data-step="1" class="relative sm:grid sm:grid-cols-[auto_1fr] sm:gap-8 items-start">
+              <div class="hidden sm:block flex-shrink-0" style="margin-left:-0.7rem;">
+                <div class="w-[1.1rem] h-[1.1rem] border-2 bg-paper" style="border-color:#F58220;"></div>
+              </div>
+              <div>
+                <p class="font-mono text-[0.62rem] font-medium tracking-[0.22em] mb-2" style="color:#F58220;">PASO 02 / AGILIZA</p>
+                <h3 class="font-mono font-bold text-xl sm:text-2xl leading-snug mb-3">Agiliza la planeación</h3>
+                <p class="text-sm sm:text-base text-ink/70 leading-relaxed max-w-xl">
+                  Cada objetivo se desglosa en tareas con responsables, fechas y evidencia requerida. La estrategia se convierte en un tablero operativo basado en metodologías ágiles.
                 </p>
               </div>
-              <span class="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-crayon-emerald border-2 border-ink" aria-hidden="true"></span>
-            </li>
+            </div>
 
-            <!-- Paso 4 -->
-            <li data-step class="relative pl-16 md:pl-0 md:grid md:grid-cols-2 md:gap-16">
-              <div class="md:col-start-2 md:pl-12">
-                <span class="font-mono text-xs font-medium tracking-[0.25em] text-crayon-purple">PASO 04 / AUDITA</span>
-                <h3 class="font-mono font-bold text-xl sm:text-2xl mt-2">Bitácora inmutable</h3>
-                <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
-                  Cada acción queda firmada y fechada. El órgano fiscalizador
-                  consulta la cadena completa sin pedir un solo oficio.
+            <!-- Paso 03 — Ejecuta -->
+            <div data-step="2" class="relative sm:grid sm:grid-cols-[auto_1fr] sm:gap-8 items-start">
+              <div class="hidden sm:block flex-shrink-0" style="margin-left:-0.7rem;">
+                <div class="w-[1.1rem] h-[1.1rem] border-2 bg-paper" style="border-color:#1FA86B;"></div>
+              </div>
+              <div>
+                <p class="font-mono text-[0.62rem] font-medium tracking-[0.22em] mb-2" style="color:#1FA86B;">PASO 03 / EJECUTA</p>
+                <h3 class="font-mono font-bold text-xl sm:text-2xl leading-snug mb-3">Asigna, monitorea y captura</h3>
+                <p class="text-sm sm:text-base text-ink/70 leading-relaxed max-w-xl">
+                  Asigna tareas al equipo en oficina y en campo. El equipo captura evidencia una sola vez, sin señal; se georreferencia y sincroniza al recuperar conexión.
                 </p>
               </div>
-              <span class="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-1 w-5 h-5 rounded-full bg-crayon-purple border-2 border-ink" aria-hidden="true"></span>
-            </li>
-          </ol>
-        </div>
+            </div>
+
+            <!-- Paso 04 — Transparenta -->
+            <div data-step="3" class="relative sm:grid sm:grid-cols-[auto_1fr] sm:gap-8 items-start">
+              <div class="hidden sm:block flex-shrink-0" style="margin-left:-0.7rem;">
+                <div class="w-[1.1rem] h-[1.1rem] border-2 bg-paper" style="border-color:#6A3FD4;"></div>
+              </div>
+              <div>
+                <p class="font-mono text-[0.62rem] font-medium tracking-[0.22em] mb-2" style="color:#6A3FD4;">PASO 04 / TRANSPARENTA</p>
+                <h3 class="font-mono font-bold text-xl sm:text-2xl leading-snug mb-3">Dashboards públicos</h3>
+                <p class="text-sm sm:text-base text-ink/70 leading-relaxed max-w-xl">
+                  Publica el avance de los programas en tiempo real. Transparencia que no solo rinde cuentas, sino que genera confianza y participación ciudadana.
+                </p>
+              </div>
+            </div>
+
+          </div><!-- /steps -->
+        </div><!-- /flujo-pasos -->
       </div>
     </section>
 
@@ -504,7 +513,7 @@
           <!-- Pilar 1: el puente (grande) -->
           <article data-card class="hard-card relative overflow-hidden p-7 sm:p-9 md:col-span-4 md:row-span-2 flex flex-col justify-between">
             <div>
-              <h3 class="font-mono font-bold text-2xl sm:text-3xl leading-snug">Puente Diseño → Operación → Reporte</h3>
+              <h3 class="font-mono font-bold text-2xl sm:text-3xl leading-snug">Puente: Diseño → Ejecución → Reporte</h3>
               <p class="mt-4 max-w-xl text-sm sm:text-base text-ink/75 leading-relaxed">
                 Una sola fuente de verdad: lo que se diseñó en gabinete es exactamente
                 lo que se ejecuta en campo y lo que se reporta al cierre. Sin versiones
@@ -512,34 +521,31 @@
               </p>
             </div>
             <div class="mt-8 flex flex-wrap items-center gap-3 font-mono text-xs sm:text-sm">
+              <span class="border-2 border-ink px-3 py-1.5 bg-paper">Teoría de Cambio</span>
+              <span class="text-crayon-orange font-bold" aria-hidden="true">→</span>
               <span class="border-2 border-ink px-3 py-1.5 bg-paper">MIR</span>
               <span class="text-crayon-orange font-bold" aria-hidden="true">→</span>
-              <span class="border-2 border-ink px-3 py-1.5 bg-paper">KANBAN</span>
+              <span class="border-2 border-ink px-3 py-1.5 bg-paper">Agiliza y ejecuta</span>
               <span class="text-crayon-orange font-bold" aria-hidden="true">→</span>
-              <span class="border-2 border-ink px-3 py-1.5 bg-paper">CAMPO</span>
-              <span class="text-crayon-orange font-bold" aria-hidden="true">→</span>
-              <span class="border-2 border-ink px-3 py-1.5 bg-kune text-white">INFORME</span>
+              <span class="border-2 border-ink px-3 py-1.5 bg-kune text-white">Transparenta</span>
             </div>
-            <img src="assets/flecha.png" alt="" aria-hidden="true" loading="lazy"
-                 class="hidden md:block absolute -right-8 -top-6 w-56 opacity-90 rotate-6 pointer-events-none select-none" />
           </article>
 
           <!-- Pilar 2: copiloto IA -->
           <article data-card class="hard-card relative overflow-hidden p-7 md:col-span-2">
-            <h3 class="font-mono font-bold text-lg sm:text-xl leading-snug">Copiloto de IA responsable</h3>
+            <h3 class="font-mono font-bold text-lg sm:text-xl leading-snug">Copiloto de impacto</h3>
             <p class="mt-3 text-sm text-ink/75 leading-relaxed">
-              Sugiere, valida y alerta. Nunca decide por ti: cada recomendación
-              queda registrada, firmada y trazable.
+              Una IA que sugiere, valida y alerta. Te ayuda a diseñar tu teoría de cambio, convertirla en una MIR robusta, y te avisa si algo se sale de control en la ejecución.
             </p>
             <p class="mt-3 font-hand text-crayon-red text-xl -rotate-2">la IA propone, tú dispones</p>
             <img src="assets/amapola.png" alt="" aria-hidden="true" loading="lazy"
-                 class="absolute -right-10 -bottom-12 w-40 rotate-12 pointer-events-none select-none" />
+                 class="absolute -right-10 -bottom-9 w-40 rotate-12 pointer-events-none select-none" />
           </article>
 
           <!-- Dato duro -->
           <article data-card class="hard-card p-7 md:col-span-2 flex flex-col justify-center">
-            <p class="font-mono font-bold text-5xl sm:text-6xl text-kune leading-none">1</p>
-            <p class="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-ink/70">captura única<br/>del campo al informe</p>
+           <h3 class="font-mono font-bold text-lg sm:text-xl leading-snug">Datos y evidencias</h3>
+            <p class="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-ink/70">Datos al instante<br/>Evidencias sistematizadas</p>
           </article>
 
           <!-- Pilar 3: bitácora (terminal) -->
@@ -559,7 +565,7 @@
             <img src="assets/ciudad.png" alt="Dibujo en crayón de una ciudad con edificios verdes, árbol azul y camión naranja" loading="lazy"
                  class="absolute right-0 bottom-0 h-full w-auto object-contain object-right-bottom pointer-events-none select-none" />
             <p class="relative font-hand text-2xl sm:text-3xl text-ink max-w-[55%] leading-snug -rotate-1">
-              hecho en el territorio,<br/>para el territorio
+              Pensado para el impacto público,<br/>adaptado a las y los servidores públicos
             </p>
           </article>
         </div>
@@ -575,7 +581,7 @@
           <span class="crayon-highlight"><span>acción.</span></span>
         </h2>
         <p data-reveal class="mt-6 text-base sm:text-lg text-ink/70 max-w-xl mx-auto leading-relaxed">
-          Arranca un piloto con tu equipo: una política, un territorio, noventa días.
+          Arranca un piloto con tu equipo:<br/> una política, un territorio, noventa días.
         </p>
 
         <!-- Formulario de solicitud de piloto -->
@@ -832,7 +838,7 @@
     /* ============ B. El garabato 3D (Three.js) ============ */
     try {
       const canvas = document.getElementById('scene-3d');
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !isMobile });
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !isMobile, preserveDrawingBuffer: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
 
       const scene = new THREE.Scene();
@@ -1003,13 +1009,23 @@
           scrollTrigger: { trigger: el, start: 'top 90%', once: true },
         });
       });
-      document.querySelectorAll('[data-step]').forEach((el) => {
+      document.querySelectorAll('[data-step]').forEach((el, i) => {
         gsap.from(el, {
-          x: el.querySelector('.md\\:col-start-2') ? 40 : -40, opacity: 0,
-          duration: 0.9, ease: 'power3.out',
-          scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+          y: 24, opacity: 0, duration: 0.7, delay: i * 0.07, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 90%', once: true },
         });
       });
+      // Conector vertical: se dibuja al hacer scroll. Usa pathLength="100"
+      // para no depender de getTotalLength() (poco fiable en un SVG con
+      // viewBox estirado + filtro de turbulencia: puede devolver 0).
+      const conectorTrazo = document.querySelector('.conector-trazo');
+      if (conectorTrazo) {
+        gsap.set(conectorTrazo, { strokeDasharray: 100, strokeDashoffset: 100 });
+        gsap.to(conectorTrazo, {
+          strokeDashoffset: 0, duration: 1.6, ease: 'power2.out',
+          scrollTrigger: { trigger: '#flujo-pasos', start: 'top 80%', once: true },
+        });
+      }
 
       // Kickers: el trazo de crayón se dibuja al entrar en vista
       document.querySelectorAll('.crayon-underline svg path').forEach((path) => {
@@ -1021,22 +1037,6 @@
         });
       });
 
-      // Conector vertical se "dibuja" con el scroll
-      const conector = document.getElementById('conector');
-      if (conector) {
-        const len = conector.getTotalLength();
-        gsap.fromTo(conector,
-          { strokeDasharray: len, strokeDashoffset: len },
-          {
-            strokeDashoffset: 0, ease: 'none',
-            scrollTrigger: {
-              trigger: '#solucion .relative.mt-16',
-              start: 'top 75%',
-              end: 'bottom 65%',
-              scrub: 0.8,
-            },
-          });
-      }
     }
 
     /* ?goto=<id>: salta a una sección (pruebas/capturas) */
